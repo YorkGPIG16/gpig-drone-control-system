@@ -1,0 +1,73 @@
+group 'gpig.group2'
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'gpig.group2.models:drone-comms-model:1.0.13'
+    compile 'gpig.group2:layer-services:1.0.24'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'
+}
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'GPIG Drone Control System',
+                'Implementation-Version': version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version'),
+                'Built-Gradle': gradle.gradleVersion,
+                'Main-Class': 'co.j6mes.infra.srf.daemon.ServiceRegistrationDaemon'
+    }
+}
+
+
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            Artifact sourcesJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'GPIG Layers Service')
+                root.appendNode('description', 'Layer services')
+                root.appendNode('url', 'https://github.com/j6mes/gpig-layer-services')
+                root.appendNode('inceptionYear', '2016')
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', 'https://github.com/j6mes/gpig-layer-services')
+                scm.appendNode('connection', 'scm:https://j6mes@github.com/j6mes/gpig-layer-services')
+                scm.appendNode('developerConnection', 'scm:git://github.com/j6mes/gpig-layer-services')
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache Software License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                license.appendNode('distribution', 'repo')
+
+                def developers = root.appendNode('developers')
+                def j6mes = developers.appendNode('developer')
+                j6mes.appendNode('id', 'j6mes')
+                j6mes.appendNode('name', 'James Thorne')
+                j6mes.appendNode('email', 'james@jthorne.co.uk')
+            }
+        }
+    }
+}
