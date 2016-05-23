@@ -22,10 +22,10 @@ public class DroneSocket implements OutputHandler {
     DataInputStream input = null;
 
     Logger log = LogManager.getLogger(DroneSocket.class);
-    public DroneSocket(final DroneInterface di, final DoesStatusUpdates outputHandler) throws IOException {
+    public DroneSocket(final String droneIP, final int port, final DroneInterface di, final DoesStatusUpdates outputHandler) throws IOException {
         Socket MyClient = null;
         try {
-            MyClient = new Socket("127.0.0.1", 9988);
+            MyClient = new Socket(droneIP, port);
         }
         catch (IOException e) {
             System.out.println(e);
@@ -100,9 +100,8 @@ public class DroneSocket implements OutputHandler {
     }
 
     public static void main(String[] args) throws IOException {
-
         C2DroneInterface di = new C2DroneInterface();
-        new DroneSocket(di, di);
+        new DroneSocket(args[0], Integer.parseInt(args[1]), di, di);
     }
 
     @Override

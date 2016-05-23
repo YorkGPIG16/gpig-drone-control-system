@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -16,6 +17,9 @@ import java.util.Date;
 public class RequestWrapper implements CommonObject  {
     RequestMessage smg = new RequestMessage();
 
+    public RequestWrapper() {
+        smg.setTasks(new ArrayList<>());
+    }
 
     @Override
     public String getText() {
@@ -30,8 +34,6 @@ public class RequestWrapper implements CommonObject  {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-
-        smg.getTasksX().clear();
         return sw.toString();
     }
 
@@ -39,4 +41,11 @@ public class RequestWrapper implements CommonObject  {
         smg.getTasksX().add(t);
     }
 
+    public void clearTasks() {
+        smg.getTasksX().clear();
+    }
+
+    public int numTasks() {
+        return smg.getTasksX().size();
+    }
 }
