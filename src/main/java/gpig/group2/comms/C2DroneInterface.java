@@ -9,6 +9,8 @@ import gpig.group2.models.drone.status.StatusMessage;
  * Created by james on 23/05/2016.
  */
 public class C2DroneInterface extends ConnectionManager implements DroneInterface, DoesStatusUpdates {
+    RequestWrapper rw = new RequestWrapper();
+
     @Override
     public void handleStatusMessage(StatusMessage sm) {
 
@@ -24,13 +26,30 @@ public class C2DroneInterface extends ConnectionManager implements DroneInterfac
 
     }
 
-    @Override
-    public void bindOutputHandler(OutputHandler connectionHandler) {
+    public C2DroneInterface() {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                while(true) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (OutputHandler h : outputHandlerList) {
+                        h.onOutput(rw);
+                    }
+                }
+            }
+        });
+
+        t.start();
 
     }
 
-    @Override
-    public void removeOutputHandler(OutputHandler connectionHandler) {
 
-    }
 }

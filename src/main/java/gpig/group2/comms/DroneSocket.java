@@ -18,6 +18,9 @@ import java.net.Socket;
  */
 public class DroneSocket implements OutputHandler {
 
+    DataOutputStream output = null;
+    DataInputStream input = null;
+
     Logger log = LogManager.getLogger(DroneSocket.class);
     public DroneSocket(final DroneInterface di, final DoesStatusUpdates outputHandler) throws IOException {
         Socket MyClient = null;
@@ -28,8 +31,7 @@ public class DroneSocket implements OutputHandler {
             System.out.println(e);
         }
 
-        DataOutputStream output = null;
-        DataInputStream input = null;
+
         try {
             output = new DataOutputStream(MyClient.getOutputStream());
             input = new DataInputStream(MyClient.getInputStream());
@@ -105,6 +107,11 @@ public class DroneSocket implements OutputHandler {
 
     @Override
     public void onOutput(CommonObject obj) {
+        try {
+            output.writeBytes(obj.getText()+"\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
