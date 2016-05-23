@@ -1,6 +1,8 @@
 package gpig.group2.comms.simulator;
 
 import gpig.group2.comms.CommonObject;
+import gpig.group2.comms.ConnectionHandler;
+import gpig.group2.comms.ConnectionManager;
 import gpig.group2.comms.OutputHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,27 +15,14 @@ import java.util.Set;
 /**
  * Created by james on 23/05/2016.
  */
-public class SimulatedDrone implements Runnable, DoesStatusUpdates {
-
-    List<OutputHandler> outputHandlerList = new ArrayList<>();
-    Set<OutputHandler> needRemoval = new HashSet<>();
+public class SimulatedDrone extends ConnectionManager implements Runnable, DoesStatusUpdates {
 
     Logger log = LogManager.getLogger(SimulatedDrone.class);
 
     CommonObject status;
     CommonObject response;
 
-    @Override
-    public void bindOutputHandler(OutputHandler connectionHandler) {
-        outputHandlerList.add(connectionHandler);
-    }
 
-    @Override
-    public void removeOutputHandler(OutputHandler connectionHandler) {
-        synchronized (this) {
-            needRemoval.add(connectionHandler);
-        }
-    }
 
     public SimulatedDrone() {
 
@@ -55,14 +44,7 @@ public class SimulatedDrone implements Runnable, DoesStatusUpdates {
                         e.printStackTrace();
                     }
 
-                    synchronized (this) {
-                        if(needRemoval.size()>0) {
-                            for (OutputHandler h : needRemoval) {
-                                outputHandlerList.remove(h);
-                            }
-                        }
-                        needRemoval.clear();
-                    }
+                    clearDeadConnections();
 
                     int i = 0;
                     for(OutputHandler oh : outputHandlerList) {
@@ -84,14 +66,7 @@ public class SimulatedDrone implements Runnable, DoesStatusUpdates {
                         e.printStackTrace();
                     }
 
-                    synchronized (this) {
-                        if(needRemoval.size()>0) {
-                            for (OutputHandler h : needRemoval) {
-                                outputHandlerList.remove(h);
-                            }
-                        }
-                        needRemoval.clear();
-                    }
+                    clearDeadConnections();
 
                     int i = 0;
                     for(OutputHandler oh : outputHandlerList) {
