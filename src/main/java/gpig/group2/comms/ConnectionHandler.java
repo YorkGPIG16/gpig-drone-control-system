@@ -41,9 +41,9 @@ public class ConnectionHandler implements Runnable, OutputHandler {
     }
 
     @Override
-    public void onOutput() {
+    public void onOutput(CommonObject obj) {
         try {
-            output.writeBytes("hello\n");
+            output.writeBytes(obj.getText()+"\n");
         } catch (IOException e) {
             uut.removeOutputHandler(this);
             log.warn("Client went away");

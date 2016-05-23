@@ -1,5 +1,6 @@
 package gpig.group2.comms.simulator;
 
+import gpig.group2.comms.CommonObject;
 import gpig.group2.comms.OutputHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,8 @@ public class SimulatedDrone implements Runnable, DoesStatusUpdates {
 
     Logger log = LogManager.getLogger(SimulatedDrone.class);
 
+    CommonObject status;
+    CommonObject response;
 
     @Override
     public void bindOutputHandler(OutputHandler connectionHandler) {
@@ -34,35 +37,70 @@ public class SimulatedDrone implements Runnable, DoesStatusUpdates {
 
     public SimulatedDrone() {
 
+        status = new StatusWrapper();
+        response = new ResponseWrapper();
+
+
     }
 
     @Override
     public void run() {
-        while(true) {
-            log.info("Sending heartbeats");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-            int i = 0;
+                    synchronized (this) {
+                        if(needRemoval.size()>0) {
+                            for (OutputHandler h : needRemoval) {
+                                outputHandlerList.remove(h);
+                            }
+                        }
+                        needRemoval.clear();
+                    }
 
-
-            synchronized (this) {
-                if(needRemoval.size()>0) {
-                    for (OutputHandler h : needRemoval) {
-                        outputHandlerList.remove(h);
+                    int i = 0;
+                    for(OutputHandler oh : outputHandlerList) {
+                        log.info("Sending status message to client "+ i++);
+                        oh.onOutput(status);
                     }
                 }
-                needRemoval.clear();
             }
+        }).start();
 
-            for(OutputHandler oh : outputHandlerList) {
 
-                log.info("Sending heartbeat to client "+ i++);
-                oh.onOutput();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    synchronized (this) {
+                        if(needRemoval.size()>0) {
+                            for (OutputHandler h : needRemoval) {
+                                outputHandlerList.remove(h);
+                            }
+                        }
+                        needRemoval.clear();
+                    }
+
+                    int i = 0;
+                    for(OutputHandler oh : outputHandlerList) {
+                        log.info("Sending response to client "+ i++);
+                        oh.onOutput(response);
+                    }
+                }
             }
-        }
+        }).start();
+
     }
 }
