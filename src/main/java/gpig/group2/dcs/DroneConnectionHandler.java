@@ -29,10 +29,14 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
 
     DroneInterface di;
 
-    public DroneConnectionHandler(Socket serviceSocket, DoesStatusUpdates uut, DroneInterface di) {
+    int droneNumber;
+    public DroneConnectionHandler(int num, Socket serviceSocket, DoesStatusUpdates uut, DroneInterface di) {
         this.serviceSocket = serviceSocket;
         this.uut = uut;
         this.di = di;
+        this.droneNumber = num;
+
+
     }
 
     @Override
@@ -64,7 +68,7 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
                         DroneStatusMessage sm = (DroneStatusMessage) u.unmarshal(new StringReader(responseLine));
 
                         log.info("Got status message");
-                        di.handleStatusMessage(sm);
+                        di.handleStatusMessage(droneNumber, sm);
                         continue;
                     } catch (JAXBException e) {
                         //e.printStackTrace();
@@ -79,7 +83,7 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
 
                         ResponseMessage rm = (ResponseMessage) u.unmarshal(new StringReader(responseLine));
                         log.info("Got response message");
-                        di.handleResponseMessage(rm);
+                        di.handleResponseMessage(droneNumber, rm);
                         continue;
 
 
@@ -96,7 +100,7 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
 
                         RequestMessage rq = (RequestMessage) u.unmarshal(new StringReader(responseLine));
                         log.info("Got request message");
-                        di.handleRequestMessage(rq);
+                        di.handleRequestMessage(droneNumber, rq);
                         continue;
 
 

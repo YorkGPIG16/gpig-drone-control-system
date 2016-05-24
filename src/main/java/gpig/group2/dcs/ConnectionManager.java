@@ -37,4 +37,10 @@ public abstract class ConnectionManager implements DoesStatusUpdates {
         }
     }
 
+    int connectionCounter = 0;
+
+    public int getConnectionNumber() {
+        return connectionCounter++;
+    }
+
 }

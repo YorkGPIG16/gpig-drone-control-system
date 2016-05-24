@@ -8,8 +8,8 @@ import gpig.group2.models.drone.status.DroneStatusMessage;
  * Created by james on 23/05/2016.
  */
 public interface DroneInterface {
-    void handleStatusMessage(DroneStatusMessage sm);
-    void handleResponseMessage(ResponseMessage rm);
-    void handleRequestMessage(RequestMessage rq);
+    void handleStatusMessage(int id, DroneStatusMessage sm);
+    void handleResponseMessage(int id, ResponseMessage rm);
+    void handleRequestMessage(int id, RequestMessage rq);
     void registerOutputHandler(OutputHandler handler);
 }

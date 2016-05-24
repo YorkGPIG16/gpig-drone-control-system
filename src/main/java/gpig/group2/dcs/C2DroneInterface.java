@@ -1,6 +1,8 @@
 package gpig.group2.dcs;
 
+import gpig.group2.dcs.c2integration.C2Integration;
 import gpig.group2.dcs.wrapper.RequestWrapper;
+import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.maps.geographic.Point;
 import gpig.group2.maps.geographic.position.BoundingBox;
 import gpig.group2.models.drone.request.RequestMessage;
@@ -19,20 +21,27 @@ import java.util.Date;
 public class C2DroneInterface implements DroneInterface {
     RequestWrapper rw = new RequestWrapper();
 
+
+    C2Integration c2;
     Logger log = LogManager.getLogger(C2DroneInterface.class);
 
     @Override
-    public void handleStatusMessage(DroneStatusMessage sm) {
+    public void handleStatusMessage(int id, DroneStatusMessage sm) {
+        StatusWrapper sw = new StatusWrapper();
+        sm.setId(id);
+
+        sw.setStatus(sm);
+
+        c2.sendDroneStatus(sw);
+    }
+
+    @Override
+    public void handleResponseMessage(int id, ResponseMessage rm) {
 
     }
 
     @Override
-    public void handleResponseMessage(ResponseMessage rm) {
-
-    }
-
-    @Override
-    public void handleRequestMessage(RequestMessage rq) {
+    public void handleRequestMessage(int id, RequestMessage rq) {
         throw new NotImplementedException();
     }
 
@@ -96,8 +105,8 @@ public class C2DroneInterface implements DroneInterface {
         }
     }
 
-    public C2DroneInterface() {
-
+    public C2DroneInterface(C2Integration c2) {
+        this.c2 = c2;
 
     }
 

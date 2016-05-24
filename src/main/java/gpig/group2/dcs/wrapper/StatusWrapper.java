@@ -34,4 +34,8 @@ public class StatusWrapper implements CommonObject {
 
         return sw.toString();
     }
+
+    public void setStatus(DroneStatusMessage status) {
+        this.smg = status;
+    }
 }

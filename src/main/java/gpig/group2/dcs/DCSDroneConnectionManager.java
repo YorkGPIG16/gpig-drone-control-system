@@ -28,7 +28,9 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
             Socket clientConnection = socket.accept();
 
             log.info("Connection accepted from "+ clientConnection.getRemoteSocketAddress().toString());
-            Runnable connectionHandler = new DroneConnectionHandler(clientConnection,this, c2DroneInterface);
+
+
+            Runnable connectionHandler = new DroneConnectionHandler(this.getConnectionNumber(),clientConnection,this, c2DroneInterface);
             new Thread(connectionHandler).start();
         }
     }
