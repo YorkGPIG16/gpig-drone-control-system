@@ -19,10 +19,6 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
         socket = new ServerSocket(9876);
         this.c2DroneInterface = c2DroneInterface;
 
-
-
-
-
     }
 
 
