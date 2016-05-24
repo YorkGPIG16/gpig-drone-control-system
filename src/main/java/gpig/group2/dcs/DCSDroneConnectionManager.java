@@ -1,5 +1,6 @@
 package gpig.group2.dcs;
 
+import gpig.group2.dcs.c2integration.HttpC2Integraiton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +45,8 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
 
 
     public static void main(String args[]) {
-        C2DroneInterface c2Bridge = new C2DroneInterface();
+        HttpC2Integraiton h = new HttpC2Integraiton();
+        C2DroneInterface c2Bridge = new C2DroneInterface(h);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
