@@ -1,6 +1,6 @@
-package gpig.group2.comms.simulator;
+package gpig.group2.dcs.wrapper;
 
-import gpig.group2.comms.CommonObject;
+import gpig.group2.dcs.CommonObject;
 import gpig.group2.models.drone.response.ResponseMessage;
 
 import javax.xml.bind.JAXBContext;

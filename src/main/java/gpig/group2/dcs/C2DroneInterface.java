@@ -1,16 +1,25 @@
-package gpig.group2.comms;
+package gpig.group2.dcs;
 
-import gpig.group2.comms.simulator.DoesStatusUpdates;
+import gpig.group2.dcs.wrapper.RequestWrapper;
+import gpig.group2.maps.geographic.Point;
+import gpig.group2.maps.geographic.position.BoundingBox;
 import gpig.group2.models.drone.request.RequestMessage;
+import gpig.group2.models.drone.request.task.AerialSurveyTask;
 import gpig.group2.models.drone.response.ResponseMessage;
 import gpig.group2.models.drone.status.StatusMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.Date;
 
 /**
  * Created by james on 23/05/2016.
  */
-public class C2DroneInterface extends ConnectionManager implements DroneInterface, DoesStatusUpdates {
+public class C2DroneInterface implements DroneInterface {
     RequestWrapper rw = new RequestWrapper();
+
+    Logger log = LogManager.getLogger(C2DroneInterface.class);
 
     @Override
     public void handleStatusMessage(StatusMessage sm) {
@@ -27,9 +36,8 @@ public class C2DroneInterface extends ConnectionManager implements DroneInterfac
         throw new NotImplementedException();
     }
 
-    public C2DroneInterface() {
-
-
+    @Override
+    public void registerOutputHandler(OutputHandler handler) {
         //Thread to send ALL requests to ALL drones
         {
             Thread t = new Thread(new Runnable() {
@@ -37,17 +45,15 @@ public class C2DroneInterface extends ConnectionManager implements DroneInterfac
                 public void run() {
                     while (true) {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
 
                         if (rw.numTasks() > 0) {
-                            for (OutputHandler h : outputHandlerList) {
-                                h.onOutput(rw);
-                            }
-
+                            log.info("sending tasks to client");
+                            handler.onOutput(rw);
                             rw.clearTasks();
                         }
 
@@ -67,12 +73,20 @@ public class C2DroneInterface extends ConnectionManager implements DroneInterfac
                 public void run() {
                     while (true) {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(4000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
+
+                        AerialSurveyTask ast = new AerialSurveyTask();
+                        ast.setLocation(new BoundingBox(new Point(100,200),new Point(300,400)));
+                        ast.setPriority(1000);
+                        ast.setTimestamp(new Date());
                         //Check maps server
+
+                        rw.addTask(ast);
+                        log.info("Adding an AerialSurveyTask");
 
                     }
                 }
@@ -80,6 +94,9 @@ public class C2DroneInterface extends ConnectionManager implements DroneInterfac
 
             t.start();
         }
+    }
+
+    public C2DroneInterface() {
 
 
     }

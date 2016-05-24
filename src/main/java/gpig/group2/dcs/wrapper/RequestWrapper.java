@@ -1,9 +1,10 @@
-package gpig.group2.comms;
 
+package gpig.group2.dcs.wrapper;
+
+
+import gpig.group2.dcs.CommonObject;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.request.Task;
-import gpig.group2.models.drone.response.ResponseMessage;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -14,7 +15,7 @@ import java.util.Date;
 /**
  * Created by james on 23/05/2016.
  */
-public class RequestWrapper implements CommonObject  {
+public class RequestWrapper implements CommonObject {
     RequestMessage smg = new RequestMessage();
 
     public RequestWrapper() {

@@ -1,13 +1,10 @@
-package gpig.group2.comms.simulator;
-
-import gpig.group2.comms.ConnectionHandler;
-import gpig.group2.comms.OutputHandler;
+package gpig.group2.dcs;
 
 /**
- * Created by james on 23/05/2016.
+ * Created by james on 24/05/2016.
  */
 public interface DoesStatusUpdates {
     void bindOutputHandler(OutputHandler connectionHandler);
-
     void removeOutputHandler(OutputHandler connectionHandler);
 }
+

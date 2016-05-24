@@ -1,4 +1,4 @@
-package gpig.group2.comms;
+package gpig.group2.dcs;
 
 /**
  * Created by james on 23/05/2016.

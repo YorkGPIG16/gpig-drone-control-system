@@ -1,6 +1,4 @@
-package gpig.group2.comms;
-
-import gpig.group2.comms.simulator.DoesStatusUpdates;
+package gpig.group2.dcs;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by james on 23/05/2016.
+ * Created by james on 24/05/2016.
  */
 public abstract class ConnectionManager implements DoesStatusUpdates {
 
