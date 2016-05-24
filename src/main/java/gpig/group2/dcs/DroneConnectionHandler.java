@@ -2,7 +2,7 @@ package gpig.group2.dcs;
 
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.response.ResponseMessage;
-import gpig.group2.models.drone.status.StatusMessage;
+import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,14 +50,18 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
         String responseLine;
         try {
             while ((responseLine = input.readLine()) != null) {
+
+                responseLine = responseLine.trim();
+
                 log.debug("Server: " + responseLine);
+
 
                 {
                     try {
-                        JAXBContext jc = JAXBContext.newInstance(StatusMessage.class);
+                        JAXBContext jc = JAXBContext.newInstance(DroneStatusMessage.class);
                         Unmarshaller u = jc.createUnmarshaller();
 
-                        StatusMessage sm = (StatusMessage) u.unmarshal(new StringReader(responseLine));
+                        DroneStatusMessage sm = (DroneStatusMessage) u.unmarshal(new StringReader(responseLine));
 
                         log.info("Got status message");
                         di.handleStatusMessage(sm);

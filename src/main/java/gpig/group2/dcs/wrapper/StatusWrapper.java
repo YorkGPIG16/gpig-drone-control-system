@@ -1,7 +1,7 @@
 package gpig.group2.dcs.wrapper;
 
 import gpig.group2.dcs.CommonObject;
-import gpig.group2.models.drone.status.StatusMessage;
+import gpig.group2.models.drone.status.DroneStatusMessage;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,7 +13,7 @@ import java.io.StringWriter;
  */
 public class StatusWrapper implements CommonObject {
 
-    StatusMessage smg = new StatusMessage();
+    DroneStatusMessage smg = new DroneStatusMessage();
 
 
     @Override
@@ -21,7 +21,7 @@ public class StatusWrapper implements CommonObject {
         StringWriter sw = new StringWriter();
         JAXBContext c = null;
         try {
-            c = JAXBContext.newInstance(StatusMessage.class);
+            c = JAXBContext.newInstance(DroneStatusMessage.class);
             Marshaller m = c.createMarshaller();
 
             m.marshal(smg,sw);

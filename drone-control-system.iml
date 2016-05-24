@@ -15,18 +15,18 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library name="Gradle: gpig.group2.models:drone-comms-model:1.0.16">
+      <library name="Gradle: gpig.group2.models:drone-comms-model:1.0.19">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.0.16/a6021da871083f2786fae7f347f187e5dae42d7f/drone-comms-model-1.0.16.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.0.19/af46605bb7d56f28c480e7a4efab20944ecb3091/drone-comms-model-1.0.19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Gradle: gpig.group2:layer-services:1.0.31">
+      <library name="Gradle: gpig.group2:layer-services:1.1.34">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2/layer-services/1.0.31/105545d6832cd28256d0662891b407686dbf3fb1/layer-services-1.0.31.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2/layer-services/1.1.34/d80668c39a565fdd9b4e3c7bcedcb031db0bd2fd/layer-services-1.1.34.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

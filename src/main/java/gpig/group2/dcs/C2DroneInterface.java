@@ -6,7 +6,7 @@ import gpig.group2.maps.geographic.position.BoundingBox;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.request.task.AerialSurveyTask;
 import gpig.group2.models.drone.response.ResponseMessage;
-import gpig.group2.models.drone.status.StatusMessage;
+import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -22,7 +22,7 @@ public class C2DroneInterface implements DroneInterface {
     Logger log = LogManager.getLogger(C2DroneInterface.class);
 
     @Override
-    public void handleStatusMessage(StatusMessage sm) {
+    public void handleStatusMessage(DroneStatusMessage sm) {
 
     }
 
