@@ -32,7 +32,9 @@ public class C2DroneInterface implements DroneInterface {
 
         sw.setStatus(sm);
 
-        c2.sendDroneStatus(sw);
+        if(c2!=null) {
+            c2.sendDroneStatus(sw);
+        }
     }
 
     @Override

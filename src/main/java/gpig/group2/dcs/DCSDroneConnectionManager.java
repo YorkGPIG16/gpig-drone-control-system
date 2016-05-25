@@ -45,8 +45,8 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
 
 
     public static void main(String args[]) {
-        HttpC2Integraiton h = new HttpC2Integraiton();
-        C2DroneInterface c2Bridge = new C2DroneInterface(h);
+        //HttpC2Integraiton h = new HttpC2Integraiton();
+        C2DroneInterface c2Bridge = new C2DroneInterface(null);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
