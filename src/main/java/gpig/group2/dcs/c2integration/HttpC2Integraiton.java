@@ -22,12 +22,13 @@ public class HttpC2Integraiton implements C2Integration {
     @Override
     public void sendDroneStatus(StatusWrapper msg) {
 
-        String url = "http://127.0.0.1:8080/GPIGGroup2MapsServer/push";
+        String url = "http://localhost:10080/GPIGGroup2MapsServer/app/push";
 
         int responseCode = -1;
         HttpClient httpClient = new DefaultHttpClient();
         try {
             HttpPost request = new HttpPost(url);
+            logger.debug("Sending " + msg.getText());
             StringEntity params =new StringEntity(msg.getText(),"UTF-8");
             params.setContentType("application/xml");
             request.addHeader("content-type", "application/xml");

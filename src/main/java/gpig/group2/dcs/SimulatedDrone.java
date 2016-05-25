@@ -1,14 +1,18 @@
 package gpig.group2.dcs;
 
-import gpig.group2.dcs.wrapper.ResponseWrapper;
-import gpig.group2.dcs.wrapper.StatusWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gpig.group2.dcs.wrapper.ResponseWrapper;
+import gpig.group2.dcs.wrapper.StatusWrapper;
+import gpig.group2.maps.geographic.Point;
+import gpig.group2.models.drone.status.DroneStatusMessage;
 
 /**
  * Created by james on 24/05/2016.
@@ -35,6 +39,14 @@ public class SimulatedDrone {
                     try {
                         while(true) {
                             synchronized (output) {
+                            	DroneStatusMessage sm = new DroneStatusMessage();
+                            	sm.setBattery(100);
+                            	sm.setPosition(new Point(100,200));
+                            	sm.setTimestamp(new Date());
+                            	
+                            	sw.setStatus(sm);
+                            	
+                            	
                                 System.out.println("Sending:" + sw.getText());
                                 output.writeBytes(sw.getText() + "\n");
 
