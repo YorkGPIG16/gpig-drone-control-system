@@ -1,6 +1,7 @@
 package gpig.group2.dcs.wrapper;
 
 import gpig.group2.dcs.CommonObject;
+import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
 
 import javax.xml.bind.JAXBContext;
@@ -32,5 +33,33 @@ public class ResponseWrapper implements CommonObject {
 
 
         return sw.toString();
+    }
+
+
+    ResponseData srd = new ResponseData();
+    public void setSingleResponseData(ResponseData singleResponseData) {
+        srd = singleResponseData;
+    }
+
+    public String getTextForSingle() {
+        StringWriter sw = new StringWriter();
+        JAXBContext c = null;
+        try {
+            c = JAXBContext.newInstance(ResponseData.class);
+            Marshaller m = c.createMarshaller();
+
+            m.marshal(srd,sw);
+
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return sw.toString();
+    }
+
+    public void setMessage(ResponseMessage message) {
+        this.smg = message;
     }
 }

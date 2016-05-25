@@ -4,8 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 
+import gpig.group2.models.drone.response.Image;
+import gpig.group2.models.drone.response.ResponseData;
+import gpig.group2.models.drone.response.ResponseMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,11 +84,30 @@ public class SimulatedDrone {
                     try {
                         while(true) {
                             synchronized (output) {
+
+                                ResponseMessage rm = new ResponseMessage();
+                                rm.setTimestamp(new Date());
+                                rm.setResponse(new ArrayList<>());
+
+                                ResponseData rd1 = new ResponseData();
+                                rd1.setImages(new ArrayList<>());
+
+                                Image i = new Image();
+                                i.setUrl("http://url");
+
+                                rd1.getImagesX().add(i);
+                                rd1.setOrigin(new Point(100,200));
+                                rd1.setTimestamp(new Date());
+
+                                rm.getResponseX().add(rd1);
+
+                                rw.setMessage(rm);
+
                                 System.out.println("Sending:" + rw.getText());
                                 output.writeBytes(rw.getText() + "\n");
                             }
                             try {
-                                Thread.sleep(5000);
+                                Thread.sleep(2000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
