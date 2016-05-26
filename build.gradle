@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compile 'gpig.group2.models:drone-comms-model:1.0.21'
+    compile 'gpig.group2.models:drone-comms-model:1.2.25'
     compile 'gpig.group2:layer-services:1.1.34'
 
 

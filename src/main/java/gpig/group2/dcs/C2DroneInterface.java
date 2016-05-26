@@ -2,6 +2,7 @@ package gpig.group2.dcs;
 
 import gpig.group2.dcs.c2integration.C2Integration;
 import gpig.group2.dcs.wrapper.RequestWrapper;
+import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.maps.geographic.Point;
 import gpig.group2.maps.geographic.position.BoundingBox;
@@ -10,11 +11,13 @@ import gpig.group2.models.drone.request.Task;
 import gpig.group2.models.drone.request.task.AerialSurveyTask;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
+import gpig.group2.models.drone.response.responsedatatype.Completed;
 import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,14 +51,34 @@ public class C2DroneInterface implements DroneInterface {
 
     @Override
     public void handleResponseMessage(int id, ResponseMessage rm) {
-        if(c2!=null) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    c2.sendPOI(rm);
+        if(c2!=null && rm!=null && rm.getResponseX() != null) {
+
+            for(ResponseData rd : rm.getResponseX()){
+
+
+                if(rd instanceof Completed) {
+
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            c2.sendCompletedDeploymentArea(rd);
+                        }
+                    });
+                    t.start();
+
+                } else {
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            c2.sendPOI(rd);
+                        }
+                    });
+                    t.start();
                 }
-            });
-            t.start();
+            }
+
+
+
         }
     }
 
@@ -103,6 +126,7 @@ public class C2DroneInterface implements DroneInterface {
         this.c2 = c2;
 
 
+        if(c2 != null)
         //Thread to read map and generate requests
         {
             Thread t = new Thread(new Runnable() {
@@ -132,6 +156,44 @@ public class C2DroneInterface implements DroneInterface {
                 }
             });
 
+            t.start();
+        } else {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        RequestMessage rm = new RequestMessage();
+                        rm.setTasks(new ArrayList<>());
+                        rm.setTimestamp(new Date());
+
+                        AerialSurveyTask ast = new AerialSurveyTask();
+                        ast.setLocation(new BoundingBox(new Point(100,200),new Point(200,300)));
+                        ast.setPriority(100);
+                        ast.setId(5);
+
+
+                        rm.getTasksX().add(ast);
+
+
+                        log.info("Adding an AerialSurveyTask");
+
+                        for (Task t : rm.getTasksX()) {
+                            synchronized (rw) {
+                                rw.addTask(t);
+                            }
+                        }
+
+
+                    }
+                }
+            });
             t.start();
         }
     }

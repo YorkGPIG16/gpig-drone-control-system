@@ -10,6 +10,10 @@ import java.util.Date;
 import gpig.group2.models.drone.response.Image;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
+import gpig.group2.models.drone.response.responsedatatype.Aborted;
+import gpig.group2.models.drone.response.responsedatatype.BuildingOccupancyResponse;
+import gpig.group2.models.drone.response.responsedatatype.Completed;
+import gpig.group2.models.drone.response.responsedatatype.ManDownResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -89,7 +93,7 @@ public class SimulatedDrone {
                                 rm.setTimestamp(new Date());
                                 rm.setResponse(new ArrayList<>());
 
-                                ResponseData rd1 = new ResponseData();
+                                ResponseData rd1 = new ManDownResponse();
                                 rd1.setImages(new ArrayList<>());
 
                                 Image i = new Image();
@@ -99,11 +103,53 @@ public class SimulatedDrone {
                                 rd1.setOrigin(new Point(100,200));
                                 rd1.setTimestamp(new Date());
 
+
+
+
+                                ResponseData rd2 = new Aborted();
+                                rd2.setTimestamp(new Date());
+                                rd2.setTaskId(2);
+
+                                ResponseData rd3 = new Completed();
+                                rd3.setTimestamp(new Date());
+                                rd3.setTaskId(4);
+
+
+                                BuildingOccupancyResponse rd4 = new BuildingOccupancyResponse();
+                                rd4.setImages(new ArrayList<>());
+
+
+                                Image i2 = new Image();
+                                i2.setUrl("http://url2");
+
+                                rd4.getImagesX().add(i2);
+                                rd4.setOrigin(new Point(100,200));
+                                rd4.setTimestamp(new Date());
+                                rd4.setEstimatedNumberOfPeople(5);
+                                rd4.setMultiStoryBuilding(true);
+
+
+
+
+
                                 rm.getResponseX().add(rd1);
+                                rm.getResponseX().add(rd2);
+                                rm.getResponseX().add(rd3);
+                                rm.getResponseX().add(rd4);
+
+
+
 
                                 rw.setMessage(rm);
 
-                                System.out.println("Sending:" + rw.getText());
+                                log.debug("Sending:" + rw.getText());
+
+
+
+
+
+
+
                                 output.writeBytes(rw.getText() + "\n");
                             }
                             try {
