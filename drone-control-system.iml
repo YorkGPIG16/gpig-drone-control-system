@@ -15,6 +15,17 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
+      <library name="Gradle: gpig.group2.models:drone-comms-model:1.2.25">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.2.25/b5a65e82880b3dbe7a3ff8eba00c42bef51d7b1a/drone-comms-model-1.2.25.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.2.25/6473026f627abccd6a79950bf0dde501083742a5/drone-comms-model-1.2.25-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="Gradle: commons-codec:commons-codec:1.9">
         <CLASSES>
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.9/9ce04e34240f674bc72680f8b843b1457383161a/commons-codec-1.9.jar!/" />
@@ -26,13 +37,13 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Gradle: gpig.group2.models:drone-comms-model:1.2.25">
+      <library name="Gradle: gpig.group2.models:alerts-model:1.2.8">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.2.25/b5a65e82880b3dbe7a3ff8eba00c42bef51d7b1a/drone-comms-model-1.2.25.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/alerts-model/1.2.8/1f5d9b4238cf1b9f678aa66b76b1b24486c98cc7/alerts-model-1.2.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/drone-comms-model/1.2.25/6473026f627abccd6a79950bf0dde501083742a5/drone-comms-model-1.2.25-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gpig.group2.models/alerts-model/1.2.8/372f3d66f4317238c4b97a13c0989a001a55671d/alerts-model-1.2.8-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
