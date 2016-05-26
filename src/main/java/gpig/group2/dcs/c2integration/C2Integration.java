@@ -2,6 +2,7 @@ package gpig.group2.dcs.c2integration;
 
 import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
+import gpig.group2.models.alerts.Alert;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
@@ -13,7 +14,12 @@ import gpig.group2.models.drone.status.DroneStatusMessage;
 public interface C2Integration {
     void sendDroneStatus(StatusWrapper msg);
     void sendPOI(ResponseData msg);
+    void sendBuildingOccupancy(ResponseData rd);
     void sendCompletedDeploymentArea(ResponseData rd);
+    void sendAlert(Alert alert);
+
+
 
     RequestMessage getRequests();
+
 }

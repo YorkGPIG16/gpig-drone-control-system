@@ -5,10 +5,14 @@ import gpig.group2.dcs.wrapper.RequestWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.maps.geographic.Point;
 import gpig.group2.maps.geographic.position.BoundingBox;
+import gpig.group2.models.alerts.Alert;
+import gpig.group2.models.alerts.Priority;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
+import gpig.group2.models.drone.response.responsedatatype.BuildingOccupancyResponse;
 import gpig.group2.models.drone.response.responsedatatype.Completed;
+import gpig.group2.models.drone.response.responsedatatype.ManDownResponse;
 import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.http.client.fluent.Request;
 import org.apache.logging.log4j.LogManager;
@@ -41,11 +45,86 @@ public class TaskPool implements DroneInterface {
     ArrayList<Task> assignedTasks = new ArrayList<Task>();
     ArrayList<Task> completedTasks = new ArrayList<Task>();
 
+    HashMap<Integer,Set<FAILURE_MODE>>  alerts = new HashMap<>();
+
+
+    private enum FAILURE_MODE {
+        BATTERY_LOW,
+        BATTERY_CRITICAL,
+        MOTOR,
+        ENGINE,
+    }
+
     public void handleStatusMessage(int id, DroneStatusMessage sm) {
         StatusWrapper sw = new StatusWrapper();
         sm.setId(id);
 
         sw.setStatus(sm);
+
+
+
+        if(c2!= null) {
+            if(alerts.get(id) == null) {
+                alerts.put(id,new HashSet<>());
+            }
+
+
+            if(sm.getFailuresX()!=null) {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if(sm.getFailuresX().contains("MOTOR") && !alerts.get(id).contains(FAILURE_MODE.MOTOR)) {
+
+                            Alert a = new Alert();
+                            a.priority = Priority.PRIORITY_MEDIUM;
+                            a.message = "Drone Motor FAIL";
+
+                            alerts.get(id).add(FAILURE_MODE.MOTOR);
+                            c2.sendAlert(a);
+                        }
+
+
+
+                        if(sm.getFailuresX().contains("ENGINE") && !alerts.get(id).contains(FAILURE_MODE.ENGINE)) {
+                            Alert a = new Alert();
+                            a.priority= Priority.PRIORITY_HIGH;
+                            a.message = "Drone Engine FAIL";
+
+                            alerts.get(id).add(FAILURE_MODE.ENGINE);
+                            c2.sendAlert(a);
+                        }
+                    }
+                });
+                t.start();
+            }
+
+
+
+            if(sm.getBatteryX() < 10 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_LOW)) {
+                Alert a = new Alert();
+                a.priority= Priority.PRIORITY_MEDIUM;
+                a.message = "Drone Low Battery";
+
+                alerts.get(id).add(FAILURE_MODE.BATTERY_LOW);
+                c2.sendAlert(a);
+
+            }
+
+            if(sm.getBatteryX() < 5 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_CRITICAL)) {
+                Alert a = new Alert();
+                a.priority= Priority.PRIORITY_HIGH;
+                a.message = "Drone Critical Battery";
+
+                alerts.get(id).add(FAILURE_MODE.BATTERY_CRITICAL);
+                c2.sendAlert(a);
+            }
+
+
+
+        }
+
+
 
         if(c2!=null) {
             Thread t = new Thread(new Runnable() {
@@ -109,13 +188,23 @@ public class TaskPool implements DroneInterface {
                     }
                 } else {
                     if (c2 != null) {
-                        Thread t = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                c2.sendPOI(rd);
-                            }
-                        });
-                        t.start();
+                        if (rd instanceof ManDownResponse) {
+                            Thread t = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    c2.sendPOI(rd);
+                                }
+                            });
+                            t.start();
+                        } else if (rd instanceof BuildingOccupancyResponse) {
+                            Thread t = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    c2.sendBuildingOccupancy(rd);
+                                }
+                            });
+                            t.start();
+                        }
                     }
                 }
             }
