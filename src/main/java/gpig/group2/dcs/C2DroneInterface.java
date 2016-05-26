@@ -6,12 +6,15 @@ import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.maps.geographic.Point;
 import gpig.group2.maps.geographic.position.BoundingBox;
+import gpig.group2.model.sensor.StrandedPerson;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.request.Task;
 import gpig.group2.models.drone.request.task.AerialSurveyTask;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
+import gpig.group2.models.drone.response.responsedatatype.BuildingOccupancyResponse;
 import gpig.group2.models.drone.response.responsedatatype.Completed;
+import gpig.group2.models.drone.response.responsedatatype.ManDownResponse;
 import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,13 +70,25 @@ public class C2DroneInterface implements DroneInterface {
                     t.start();
 
                 } else {
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            c2.sendPOI(rd);
-                        }
-                    });
-                    t.start();
+
+                    if(rd instanceof ManDownResponse) {
+                        Thread t = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c2.sendPOI(rd);
+                            }
+                        });
+                        t.start();
+                    } else if (rd instanceof BuildingOccupancyResponse) {
+                        Thread t = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                c2.sendBuildingOccupancy(rd);
+                            }
+                        });
+                        t.start();
+                    }
+
                 }
             }
 
