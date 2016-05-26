@@ -6,6 +6,7 @@ import co.j6mes.infra.srf.query.SimpleServiceQuery;
 import gpig.group2.dcs.C2DroneInterface;
 import gpig.group2.dcs.ConnectionManager;
 import gpig.group2.dcs.DCSDroneConnectionManager;
+import gpig.group2.dcs.TaskPool;
 import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.models.alerts.Alert;
@@ -549,12 +550,11 @@ public class HttpC2Integration implements C2Integration {
 
     public static void main(String[] args) {
         HttpC2Integration h = new HttpC2Integration();
-
-        C2DroneInterface c2Bridge = new C2DroneInterface(h);
+        TaskPool c2Bridge = new TaskPool(h);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
-            c2Bridge.registerOutputHandler(connm);
+//            c2Bridge.registerOutputHandler(connm);
 
             connm.listen();
         } catch (IOException e) {
