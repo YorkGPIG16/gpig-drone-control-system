@@ -143,7 +143,6 @@ public class C2DroneInterface implements DroneInterface {
                         RequestMessage rm = c2.getRequests();
                         if(rm!=null) {
 
-                            log.info("Adding an AerialSurveyTask");
                             List<Task> tasks = c2.getRequests().getTasksX();
                             for (Task t : tasks) {
                                 synchronized (rw) {

@@ -32,6 +32,7 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
 
             Runnable connectionHandler = new DroneConnectionHandler(this.getConnectionNumber(),clientConnection,this, c2DroneInterface);
             new Thread(connectionHandler).start();
+            c2DroneInterface.registerOutputHandler((DroneConnectionHandler) connectionHandler);
         }
     }
     @Override
@@ -44,11 +45,12 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
 
 
     public static void main(String args[]) {
-        C2DroneInterface c2Bridge = new C2DroneInterface(null);
+        //C2DroneInterface c2Bridge = new C2DroneInterface(null);
+        TaskPool c2Bridge = new TaskPool(null);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
-            c2Bridge.registerOutputHandler(connm);
+            //c2Bridge.registerOutputHandler(connm);
 
 
             connm.listen();

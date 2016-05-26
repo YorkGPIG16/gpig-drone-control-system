@@ -39,6 +39,11 @@ public class DroneConnectionHandler implements Runnable, OutputHandler {
 
     }
 
+    public int getDroneNumber()
+    {
+        return droneNumber;
+    }
+
     @Override
     public void run() {
         try {
