@@ -8,7 +8,7 @@ import co.j6mes.infra.srf.registration.SimpleServiceRegistry;
 import gpig.group2.dcs.C2DroneInterface;
 import gpig.group2.dcs.ConnectionManager;
 import gpig.group2.dcs.DCSDroneConnectionManager;
-import gpig.group2.dcs.TaskPool;
+import gpig.group2.dcs.NewTaskPool;
 import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.models.alerts.Alert;
@@ -247,7 +247,7 @@ public class HttpC2Integration implements C2Integration {
 
     @Override
     public void sendPOI(ResponseData msg) {
-
+        log.info("Sending POI");
         ResponseWrapper rw = new ResponseWrapper();
         rw.setSingleResponseData(msg);
 
@@ -561,7 +561,7 @@ public class HttpC2Integration implements C2Integration {
         sr.up();
 
         HttpC2Integration h = new HttpC2Integration();
-        TaskPool c2Bridge = new TaskPool(h);
+        NewTaskPool c2Bridge = new NewTaskPool(h);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);

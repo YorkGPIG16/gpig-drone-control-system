@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO" name="Drone Control Logger">
+<Configuration status="DEBUG" name="Drone Control Logger">
     <Properties>
         <Property name="LOG_DIR">logs</Property>
         <Property name="ARCHIVE">archive</Property>
@@ -18,7 +18,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="INFO">
+        <Root level="DEBUG">
             <AppenderRef ref="fileWriter"/>
             <AppenderRef ref="STDOUT"/>
         </Root>

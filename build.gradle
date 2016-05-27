@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     compile 'gpig.group2.models:drone-comms-model:1.2.25'
-    compile 'gpig.group2:layer-services:1.1.34'
+    compile 'gpig.group2:layer-services:1.3.41'
     compile 'gpig.group2.models:alerts-model:1.2.8'
 
     compile 'co.j6mes.infra.srf:service-registration-framework:1.0.1.8'

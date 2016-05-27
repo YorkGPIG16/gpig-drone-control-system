@@ -49,7 +49,7 @@ public class SimulatedDrone {
                             synchronized (output) {
                             	DroneStatusMessage sm = new DroneStatusMessage();
                             	sm.setBattery(100);
-                            	sm.setPosition(new Point(100,200));
+                            	sm.setPosition(new Point(100.0,200.0));
                             	sm.setTimestamp(new Date());
                             	
                             	sw.setStatus(sm);
@@ -100,7 +100,7 @@ public class SimulatedDrone {
                                 i.setUrl("http://url");
 
                                 rd1.getImagesX().add(i);
-                                rd1.setOrigin(new Point(100,200));
+                                rd1.setOrigin(new Point(100.0,200.0));
                                 rd1.setTimestamp(new Date());
 
 
@@ -123,7 +123,7 @@ public class SimulatedDrone {
                                 i2.setUrl("http://url2");
 
                                 rd4.getImagesX().add(i2);
-                                rd4.setOrigin(new Point(100,200));
+                                rd4.setOrigin(new Point(100.0,200.0));
                                 rd4.setTimestamp(new Date());
                                 rd4.setEstimatedNumberOfPeople(5);
                                 rd4.setMultiStoryBuilding(true);

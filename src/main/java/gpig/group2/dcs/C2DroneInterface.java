@@ -188,7 +188,7 @@ public class C2DroneInterface implements DroneInterface {
                         rm.setTimestamp(new Date());
 
                         AerialSurveyTask ast = new AerialSurveyTask();
-                        ast.setLocation(new BoundingBox(new Point(100,200),new Point(200,300)));
+                        ast.setLocation(new BoundingBox(new Point(100.0,200.0),new Point(200.0,30.0)));
                         ast.setPriority(100);
                         ast.setId(5);
 
