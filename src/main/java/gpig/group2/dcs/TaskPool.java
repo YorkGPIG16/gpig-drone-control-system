@@ -13,6 +13,7 @@ import gpig.group2.models.drone.response.ResponseMessage;
 import gpig.group2.models.drone.response.responsedatatype.BuildingOccupancyResponse;
 import gpig.group2.models.drone.response.responsedatatype.Completed;
 import gpig.group2.models.drone.response.responsedatatype.ManDownResponse;
+import gpig.group2.models.drone.status.DroneStatusCollection;
 import gpig.group2.models.drone.status.DroneStatusMessage;
 import org.apache.http.client.fluent.Request;
 import org.apache.logging.log4j.LogManager;
@@ -262,18 +263,29 @@ public class TaskPool implements DroneInterface {
 
 
                                 if (!inTasks && !inCompleted && !inAssigned) {
-                                    if (idleWorkers.isEmpty()) {
+                                    boolean added = false;
+                                    for(DroneConnectionHandler worker : idleWorkers) {
+                                        if(alerts.get(worker.getDroneNumber()) == null || alerts.get(worker.getDroneNumber()).size()>0) {
+
+                                            workers.add(worker);
+                                            idleWorkers.remove(0);
+                                            assignedTasks.add(t);
+                                            RequestWrapper rw = new RequestWrapper();
+                                            rw.addTask(t);
+                                            worker.onOutput(rw);
+                                            added = true;
+                                            break;
+                                        }
+
+
+                                    }
+
+
+                                    if (!added) {
                                         tasks.add(t);
                                         Collections.sort(tasks, new TaskComparator());
-                                    } else {
-                                        DroneConnectionHandler worker = idleWorkers.get(0);
-                                        workers.add(worker);
-                                        idleWorkers.remove(0);
-                                        assignedTasks.add(t);
-                                        RequestWrapper rw = new RequestWrapper();
-                                        rw.addTask(t);
-                                        worker.onOutput(rw);
                                     }
+
                                 }
                             }
                         }
