@@ -47,9 +47,9 @@ public class TaskPool implements DroneInterface {
     ArrayList<DroneConnectionHandler> workers = new ArrayList<DroneConnectionHandler>();
     ArrayList<Task> assignedTasks = new ArrayList<Task>();
     ArrayList<Task> completedTasks = new ArrayList<Task>();
+    HashMap<Integer,Task> taskAllocation= new HashMap<>();
 
     HashMap<Integer,Set<FAILURE_MODE>>  alerts = new HashMap<>();
-
 
     private enum FAILURE_MODE {
         BATTERY_LOW,
@@ -166,11 +166,13 @@ public class TaskPool implements DroneInterface {
 
                     assignedTasks.remove(completedTask);
                     completedTasks.add(completedTask);
+                    taskAllocation.remove(id);
 
                     if (!tasks.isEmpty()) {
                         Task t = tasks.get(0);
                         assignedTasks.add(t);
                         tasks.remove(0);
+                        taskAllocation.put(id, t);
 
                         RequestWrapper rw = new RequestWrapper();
                         rw.addTask(t);
@@ -199,6 +201,8 @@ public class TaskPool implements DroneInterface {
                         }
                     }
 
+                    taskAllocation.remove(id);
+
                     if (idleWorkers.isEmpty())
                     {
                         assignedTasks.remove(abortedTask);
@@ -206,6 +210,7 @@ public class TaskPool implements DroneInterface {
                     }
                     else
                     {
+                        taskAllocation.put(id, abortedTask);
                         DroneConnectionHandler worker = idleWorkers.get(0);
                         workers.add(worker);
                         idleWorkers.remove(0);
@@ -245,16 +250,19 @@ public class TaskPool implements DroneInterface {
 
     public void registerOutputHandler(OutputHandler handler) {
 
+        DroneConnectionHandler worker = (DroneConnectionHandler) handler;
+
         if (!tasks.isEmpty())
         {
-            workers.add((DroneConnectionHandler) handler);
+            workers.add(worker);
             Task t = tasks.get(0);
             assignedTasks.add(t);
             tasks.remove(0);
+            taskAllocation.put(worker.getDroneNumber(), t);
 
             RequestWrapper rw = new RequestWrapper();
             rw.addTask(t);
-            handler.onOutput(rw);
+            worker.onOutput(rw);
         }
         else
         {
@@ -310,6 +318,25 @@ public class TaskPool implements DroneInterface {
                         {
                             idleWorkers.remove(handler);
                             workers.remove(handler);
+
+                            Task t = taskAllocation.get(handler.getDroneNumber());
+                            taskAllocation.remove(handler.getDroneNumber());
+
+                            if (idleWorkers.isEmpty())
+                            {
+                                tasks.add(t);
+                                Collections.sort(tasks, new TaskComparator());
+                            }
+                            else {
+                                DroneConnectionHandler worker = idleWorkers.get(0);
+                                workers.add(worker);
+                                idleWorkers.remove(0);
+                                assignedTasks.add(t);
+                                taskAllocation.put(worker.getDroneNumber(), t);
+                                RequestWrapper rw = new RequestWrapper();
+                                rw.addTask(t);
+                                worker.onOutput(rw);
+                            }
                         }
 
                         RequestMessage rm = c2.getRequests();
