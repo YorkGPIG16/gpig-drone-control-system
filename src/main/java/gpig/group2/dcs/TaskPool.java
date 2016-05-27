@@ -283,6 +283,7 @@ public class TaskPool implements DroneInterface {
                             }
                             catch (IOException ex)
                             {
+                                log.warn("Killed worker which disconnected");
                                 // Drone has died, remove it from the workers list.
                                 deadHandlers.add(handler);
                             }
@@ -295,6 +296,7 @@ public class TaskPool implements DroneInterface {
                             }
                             catch (IOException ex)
                             {
+                                log.warn("Killed idle drone which disconnected");
                                 // Drone has died, remove it from the workers list.
                                 deadHandlers.add(handler);
                             }
@@ -302,8 +304,12 @@ public class TaskPool implements DroneInterface {
 
                         for (DroneConnectionHandler handler : deadHandlers)
                         {
+
                             idleWorkers.remove(handler);
                             workers.remove(handler);
+
+
+
                         }
 
                         RequestMessage rm = c2.getRequests();
@@ -326,7 +332,7 @@ public class TaskPool implements DroneInterface {
                                 if (!inTasks && !inCompleted && !inAssigned) {
                                     boolean added = false;
                                     for(DroneConnectionHandler worker : idleWorkers) {
-                                        if(alerts.get(worker.getDroneNumber()) == null || alerts.get(worker.getDroneNumber()).size()>0) {
+                                        if(alerts.get(worker.getDroneNumber()) == null || alerts.get(worker.getDroneNumber()).size()==0) {
 
                                             workers.add(worker);
                                             idleWorkers.remove(0);
@@ -381,6 +387,7 @@ public class TaskPool implements DroneInterface {
                             catch (IOException ex)
                             {
                                 // Drone has died, remove it from the workers list.
+                                log.warn("Killed drone which disconnected");
                                 deadHandlers.add(handler);
                             }
                         }
@@ -393,6 +400,7 @@ public class TaskPool implements DroneInterface {
                             catch (IOException ex)
                             {
                                 // Drone has died, remove it from the workers list.
+                                log.warn("Killed drone which disconnected");
                                 deadHandlers.add(handler);
                             }
                         }
