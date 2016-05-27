@@ -5,11 +5,13 @@ import gpig.group2.dcs.wrapper.RequestWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.maps.geographic.Point;
 import gpig.group2.maps.geographic.position.BoundingBox;
+import gpig.group2.maps.platform.Drone;
 import gpig.group2.models.alerts.Alert;
 import gpig.group2.models.alerts.Priority;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
+import gpig.group2.models.drone.response.responsedatatype.Aborted;
 import gpig.group2.models.drone.response.responsedatatype.BuildingOccupancyResponse;
 import gpig.group2.models.drone.response.responsedatatype.Completed;
 import gpig.group2.models.drone.response.responsedatatype.ManDownResponse;
@@ -21,6 +23,7 @@ import gpig.group2.models.drone.request.Task;
 import gpig.group2.models.drone.request.task.AerialSurveyTask;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -186,6 +189,31 @@ public class TaskPool implements DroneInterface {
                         });
                         t.start();
                     }
+                } else if (rd instanceof Aborted) {
+                    int taskId = rd.getTaskIdX();
+                    Task abortedTask = null;
+                    for (Task t : assignedTasks) {
+                        if (t.getIdX() == taskId) {
+                            abortedTask = t;
+                            break;
+                        }
+                    }
+
+                    if (idleWorkers.isEmpty())
+                    {
+                        assignedTasks.remove(abortedTask);
+                        tasks.add(abortedTask);
+                    }
+                    else
+                    {
+                        DroneConnectionHandler worker = idleWorkers.get(0);
+                        workers.add(worker);
+                        idleWorkers.remove(0);
+
+                        RequestWrapper rw = new RequestWrapper();
+                        rw.addTask(abortedTask);
+                        worker.onOutput(rw);
+                    }
                 } else {
                     if (c2 != null) {
                         if (rd instanceof ManDownResponse) {
@@ -250,6 +278,39 @@ public class TaskPool implements DroneInterface {
                             e.printStackTrace();
                         }
 
+                        ArrayList<DroneConnectionHandler> deadHandlers = new ArrayList<DroneConnectionHandler>();
+
+                        // Check all the drones are alive.
+                        for (DroneConnectionHandler handler : workers)
+                        {
+                            try
+                            {
+                                handler.serviceSocket.getOutputStream().write(' ');
+                            }
+                            catch (IOException ex)
+                            {
+                                // Drone has died, remove it from the workers list.
+                                deadHandlers.add(handler);
+                            }
+                        }
+                        for (DroneConnectionHandler handler : idleWorkers)
+                        {
+                            try
+                            {
+                                handler.serviceSocket.getOutputStream().write(' ');
+                            }
+                            catch (IOException ex)
+                            {
+                                // Drone has died, remove it from the workers list.
+                                deadHandlers.add(handler);
+                            }
+                        }
+
+                        for (DroneConnectionHandler handler : deadHandlers)
+                        {
+                            idleWorkers.remove(handler);
+                            workers.remove(handler);
+                        }
 
                         RequestMessage rm = c2.getRequests();
                         if(rm!=null && c2.getRequests().getTasksX() != null) {
@@ -298,6 +359,40 @@ public class TaskPool implements DroneInterface {
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        }
+
+                        ArrayList<DroneConnectionHandler> deadHandlers = new ArrayList<DroneConnectionHandler>();
+
+                        // Check all the drones are alive.
+                        for (DroneConnectionHandler handler : workers)
+                        {
+                            try
+                            {
+                                handler.serviceSocket.getOutputStream().write(' ');
+                            }
+                            catch (IOException ex)
+                            {
+                                // Drone has died, remove it from the workers list.
+                                deadHandlers.add(handler);
+                            }
+                        }
+                        for (DroneConnectionHandler handler : idleWorkers)
+                        {
+                            try
+                            {
+                                handler.serviceSocket.getOutputStream().write(' ');
+                            }
+                            catch (IOException ex)
+                            {
+                                // Drone has died, remove it from the workers list.
+                                deadHandlers.add(handler);
+                            }
+                        }
+
+                        for (DroneConnectionHandler handler : deadHandlers)
+                        {
+                            idleWorkers.remove(handler);
+                            workers.remove(handler);
                         }
 
                         RequestMessage rm = new RequestMessage();
