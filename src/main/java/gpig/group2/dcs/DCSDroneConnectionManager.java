@@ -45,12 +45,10 @@ public class DCSDroneConnectionManager extends ConnectionManager implements Does
 
 
     public static void main(String args[]) {
-        //C2DroneInterface c2Bridge = new C2DroneInterface(null);
         TaskPool c2Bridge = new TaskPool(null);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
-            //c2Bridge.registerOutputHandler(connm);
 
 
             connm.listen();
