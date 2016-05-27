@@ -3,9 +3,12 @@ package gpig.group2.dcs.c2integration;
 import co.j6mes.infra.srf.query.QueryResponse;
 import co.j6mes.infra.srf.query.ServiceQuery;
 import co.j6mes.infra.srf.query.SimpleServiceQuery;
+import co.j6mes.infra.srf.registration.ServiceRegistry;
+import co.j6mes.infra.srf.registration.SimpleServiceRegistry;
 import gpig.group2.dcs.C2DroneInterface;
 import gpig.group2.dcs.ConnectionManager;
 import gpig.group2.dcs.DCSDroneConnectionManager;
+import gpig.group2.dcs.TaskPool;
 import gpig.group2.dcs.wrapper.ResponseWrapper;
 import gpig.group2.dcs.wrapper.StatusWrapper;
 import gpig.group2.models.alerts.Alert;
@@ -107,7 +110,7 @@ public class HttpC2Integration implements C2Integration {
 
                         QueryResponse qr = sq.query("c2","vui");
                         if(qr.Path!=null) {
-                            connectionUpMaps = true;
+                            connectionUpVUI = true;
                             vuiPath = "http://"+qr.IP+":"+qr.Port+"/"+qr.Path;
                         }
 
@@ -137,14 +140,14 @@ public class HttpC2Integration implements C2Integration {
                 while(true) {
 
                     synchronized (tthis){
-                        connectionUpVUI = false;
+                        connectionUpAlerts = false;
 
                         ServiceQuery sq = new SimpleServiceQuery();
 
                         QueryResponse qr = sq.query("c2","alerts");
                         if(qr.Path!=null) {
-                            connectionUpMaps = true;
-                            vuiPath = "http://"+qr.IP+":"+qr.Port+"/"+qr.Path;
+                            connectionUpAlerts = true;
+                            alertsPath = "http://"+qr.IP+":"+qr.Port+"/"+qr.Path;
                         }
 
                         tthis.notify();
@@ -194,7 +197,7 @@ public class HttpC2Integration implements C2Integration {
                     e.printStackTrace();
                 }
             }
-            url = mapsPath+"push";
+            url = mapsPath+"push/droneStatus";
         }
 
         int responseCode = -1;
@@ -338,7 +341,7 @@ public class HttpC2Integration implements C2Integration {
                     e.printStackTrace();
                 }
             }
-            url = mapsPath+"buildingOccupancy";
+            url = mapsPath+"push/buildingOccupancy";
         }
 
 
@@ -457,6 +460,9 @@ public class HttpC2Integration implements C2Integration {
     @Override
     public void sendAlert(Alert alert) {
 
+
+        log.debug("SENDING ALERTS");
+
         AlertMessage am = new AlertMessage();
         am.alerts = new ArrayList<>();
         am.alerts.add(alert);
@@ -506,6 +512,7 @@ public class HttpC2Integration implements C2Integration {
             request.addHeader("Accept", "*/*");
             request.addHeader("Accept-Encoding", "gzip,deflate,sdch");
             request.addHeader("Accept-Language", "en-US,en;q=0.8");
+            request.addHeader("Authorization","Basic YWRtaW46YWRtaW4=");
             request.setEntity(params);
 
 
@@ -548,14 +555,16 @@ public class HttpC2Integration implements C2Integration {
 
 
     public static void main(String[] args) {
-        HttpC2Integration h = new HttpC2Integration();
 
-        C2DroneInterface c2Bridge = new C2DroneInterface(h);
+        ServiceRegistry sr = new SimpleServiceRegistry("dcs");
+        sr.register("drone",9876);
+        sr.up();
+        
+        HttpC2Integration h = new HttpC2Integration();
+        TaskPool c2Bridge = new TaskPool(h);
 
         try {
             DCSDroneConnectionManager connm = new DCSDroneConnectionManager(c2Bridge);
-            c2Bridge.registerOutputHandler(connm);
-
             connm.listen();
         } catch (IOException e) {
             log.fatal(e);

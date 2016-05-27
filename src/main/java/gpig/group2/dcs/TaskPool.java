@@ -252,9 +252,11 @@ public class TaskPool implements DroneInterface {
 
 
                         RequestMessage rm = c2.getRequests();
-                        if(rm!=null) {
+                        if(rm!=null && c2.getRequests().getTasksX() != null) {
 
                             List<Task> newTasks = c2.getRequests().getTasksX();
+
+
                             for (Task t : newTasks){
                                 boolean inTasks = tasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
                                 boolean inCompleted = completedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
