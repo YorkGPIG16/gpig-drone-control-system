@@ -305,7 +305,7 @@ public class TaskPool implements DroneInterface {
                         rm.setTimestamp(new Date());
 
                         AerialSurveyTask ast = new AerialSurveyTask();
-                        ast.setLocation(new BoundingBox(new Point(53.9560689f, -1.0691074f), new Point(53.9544974f, -1.0662036f)));
+                        ast.setLocation(new BoundingBox(new Point(53.9550257f, -1.0700746f), new Point(53.9544843f, -1.069574f)));
                         ast.setPriority(100);
                         ast.setId(count++);
 

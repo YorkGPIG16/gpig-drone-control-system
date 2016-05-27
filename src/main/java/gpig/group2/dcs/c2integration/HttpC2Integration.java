@@ -555,11 +555,10 @@ public class HttpC2Integration implements C2Integration {
 
 
     public static void main(String[] args) {
-
         ServiceRegistry sr = new SimpleServiceRegistry("dcs");
         sr.register("drone",9876);
         sr.up();
-        
+
         HttpC2Integration h = new HttpC2Integration();
         TaskPool c2Bridge = new TaskPool(h);
 
