@@ -395,6 +395,7 @@ public class HttpC2Integration implements C2Integration {
     @Override
     public void sendCompletedDeploymentArea(ResponseData rd) {
         String url = "";
+        log.info("Posting completed deployment area");
         synchronized (tthis) {
             while(!connectionUpMaps) {
                 try {
@@ -409,7 +410,7 @@ public class HttpC2Integration implements C2Integration {
                     e.printStackTrace();
                 }
             }
-            url = mapsPath+"deployAreas/Complete";
+            url = mapsPath+"deployAreas/complete";
         }
 
         ResponseWrapper rw = new ResponseWrapper();

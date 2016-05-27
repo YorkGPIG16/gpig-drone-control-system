@@ -28,10 +28,11 @@ import java.util.*;
  */
 public class TaskPool implements DroneInterface {
 
-    public class TaskComparator implements Comparator<Task>
-    {
-        @ Override
+    public class TaskComparator implements Comparator<Task> {
+        @Override
         public int compare(Task t1, Task t2) {
+
+
             return Integer.compare(t1.getPriorityX(), t2.getPriorityX());
         }
     }
@@ -45,7 +46,7 @@ public class TaskPool implements DroneInterface {
     ArrayList<Task> assignedTasks = new ArrayList<Task>();
     ArrayList<Task> completedTasks = new ArrayList<Task>();
 
-    HashMap<Integer,Set<FAILURE_MODE>>  alerts = new HashMap<>();
+    HashMap<Integer, Set<FAILURE_MODE>> alerts = new HashMap<>();
 
 
     private enum FAILURE_MODE {
@@ -62,19 +63,18 @@ public class TaskPool implements DroneInterface {
         sw.setStatus(sm);
 
 
-
-        if(c2!= null) {
-            if(alerts.get(id) == null) {
-                alerts.put(id,new HashSet<>());
+        if (c2 != null) {
+            if (alerts.get(id) == null) {
+                alerts.put(id, new HashSet<>());
             }
 
 
-            if(sm.getFailuresX()!=null) {
+            if (sm.getFailuresX() != null) {
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-                        if(sm.getFailuresX().contains("MOTOR") && !alerts.get(id).contains(FAILURE_MODE.MOTOR)) {
+                        if (sm.getFailuresX().contains("MOTOR") && !alerts.get(id).contains(FAILURE_MODE.MOTOR)) {
 
                             Alert a = new Alert();
                             a.priority = Priority.PRIORITY_MEDIUM;
@@ -85,10 +85,9 @@ public class TaskPool implements DroneInterface {
                         }
 
 
-
-                        if(sm.getFailuresX().contains("ENGINE") && !alerts.get(id).contains(FAILURE_MODE.ENGINE)) {
+                        if (sm.getFailuresX().contains("ENGINE") && !alerts.get(id).contains(FAILURE_MODE.ENGINE)) {
                             Alert a = new Alert();
-                            a.priority= Priority.PRIORITY_HIGH;
+                            a.priority = Priority.PRIORITY_HIGH;
                             a.message = "Drone Engine FAIL";
 
                             alerts.get(id).add(FAILURE_MODE.ENGINE);
@@ -100,10 +99,9 @@ public class TaskPool implements DroneInterface {
             }
 
 
-
-            if(sm.getBatteryX() < 10 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_LOW)) {
+            if (sm.getBatteryX() < 10 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_LOW)) {
                 Alert a = new Alert();
-                a.priority= Priority.PRIORITY_MEDIUM;
+                a.priority = Priority.PRIORITY_MEDIUM;
                 a.message = "Drone Low Battery";
 
                 alerts.get(id).add(FAILURE_MODE.BATTERY_LOW);
@@ -111,9 +109,9 @@ public class TaskPool implements DroneInterface {
 
             }
 
-            if(sm.getBatteryX() < 5 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_CRITICAL)) {
+            if (sm.getBatteryX() < 5 && !alerts.get(id).contains(FAILURE_MODE.BATTERY_CRITICAL)) {
                 Alert a = new Alert();
-                a.priority= Priority.PRIORITY_HIGH;
+                a.priority = Priority.PRIORITY_HIGH;
                 a.message = "Drone Critical Battery";
 
                 alerts.get(id).add(FAILURE_MODE.BATTERY_CRITICAL);
@@ -121,12 +119,10 @@ public class TaskPool implements DroneInterface {
             }
 
 
-
         }
 
 
-
-        if(c2!=null) {
+        if (c2 != null) {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -138,7 +134,7 @@ public class TaskPool implements DroneInterface {
     }
 
     public void handleResponseMessage(int id, ResponseMessage rm) {
-        if(rm!=null && rm.getResponseX() != null) {
+        if (rm != null && rm.getResponseX() != null) {
 
             DroneConnectionHandler completedWorker = null;
             for (DroneConnectionHandler worker : workers) {
@@ -148,9 +144,9 @@ public class TaskPool implements DroneInterface {
                 }
             }
 
-            for(ResponseData rd : rm.getResponseX()){
+            for (ResponseData rd : rm.getResponseX()) {
 
-                if(rd instanceof Completed) {
+                if (rd instanceof Completed) {
 
                     int taskId = rd.getTaskIdX();
                     Task completedTask = null;
@@ -217,8 +213,7 @@ public class TaskPool implements DroneInterface {
 
     public void registerOutputHandler(OutputHandler handler) {
 
-        if (!tasks.isEmpty())
-        {
+        if (!tasks.isEmpty()) {
             workers.add((DroneConnectionHandler) handler);
             Task t = tasks.get(0);
             assignedTasks.add(t);
@@ -227,9 +222,7 @@ public class TaskPool implements DroneInterface {
             RequestWrapper rw = new RequestWrapper();
             rw.addTask(t);
             handler.onOutput(rw);
-        }
-        else
-        {
+        } else {
             idleWorkers.add((DroneConnectionHandler) handler);
         }
     }
@@ -237,7 +230,7 @@ public class TaskPool implements DroneInterface {
     public TaskPool(C2Integration c2) {
         this.c2 = c2;
 
-        if(c2 != null)
+        if (c2 != null)
         //Thread to read map and generate requests
         {
             Thread t = new Thread(new Runnable() {
@@ -252,24 +245,27 @@ public class TaskPool implements DroneInterface {
 
 
                         RequestMessage rm = c2.getRequests();
-                        if(rm!=null && c2.getRequests().getTasksX() != null) {
+                        if (rm != null && c2.getRequests().getTasksX() != null) {
 
                             List<Task> newTasks = c2.getRequests().getTasksX();
 
 
-                            for (Task t : newTasks){
-                                boolean inTasks = tasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
-                                boolean inCompleted = completedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
-                                boolean inAssigned = assignedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
+                            for (Task t : newTasks) {
+                                boolean inTasks = tasks.stream().filter(o -> o.getIdX().equals(t.getIdX())).findFirst().isPresent();
+                                boolean inCompleted = completedTasks.stream().filter(o -> o.getIdX().equals(t.getIdX())).findFirst().isPresent();
+                                boolean inAssigned = assignedTasks.stream().filter(o -> o.getIdX().equals(t.getIdX())).findFirst().isPresent();
 
-                                if (!inTasks && !inCompleted && !inAssigned)
-                                {
-                                    if (idleWorkers.isEmpty())
-                                    {
+
+                                if (t.getPriorityX() == null) {
+                                    t.setPriority(0);
+                                }
+
+
+                                if (!inTasks && !inCompleted && !inAssigned) {
+                                    if (idleWorkers.isEmpty()) {
                                         tasks.add(t);
                                         Collections.sort(tasks, new TaskComparator());
-                                    }
-                                    else {
+                                    } else {
                                         DroneConnectionHandler worker = idleWorkers.get(0);
                                         workers.add(worker);
                                         idleWorkers.remove(0);
@@ -315,20 +311,17 @@ public class TaskPool implements DroneInterface {
 
                         List<Task> newTasks = new ArrayList<Task>();
                         newTasks.add(ast);
-                        for (Task t : newTasks){
-                            boolean inTasks = tasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
-                            boolean inCompleted = completedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
-                            boolean inAssigned = assignedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
+                        for (Task t : newTasks) {
+                            boolean inTasks = TaskWithIDExistsInList(t.getIdX(),tasks); //.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
+                            boolean inCompleted = TaskWithIDExistsInList(t.getIdX(),completedTasks); //completedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
+                            boolean inAssigned = TaskWithIDExistsInList(t.getIdX(),assignedTasks);// assignedTasks.stream().filter(o -> o.getIdX() == t.getIdX()).findFirst().isPresent();
 
-                            if (!inTasks && !inCompleted && !inAssigned)
-                            {
-                                if (idleWorkers.isEmpty())
-                                {
+                            if (!inTasks && !inCompleted && !inAssigned) {
+                                if (idleWorkers.isEmpty()) {
                                     log.info("No idle workers, sent new task.");
                                     tasks.add(t);
                                     Collections.sort(tasks, new TaskComparator());
-                                }
-                                else {
+                                } else {
                                     log.info("Idle worker, assigned task.");
                                     DroneConnectionHandler worker = idleWorkers.get(0);
                                     workers.add(worker);
@@ -347,5 +340,20 @@ public class TaskPool implements DroneInterface {
             });
             t.start();
         }
+
+
     }
+
+
+    public static boolean TaskWithIDExistsInList(Integer id, ArrayList<Task> tasks) {
+        for(Task t: tasks) {
+            if ( t.getIdX() != null ) {
+                if (t.getIdX().equals(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
