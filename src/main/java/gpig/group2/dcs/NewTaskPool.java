@@ -29,7 +29,7 @@ public class NewTaskPool implements DroneInterface {
     public class TaskPriorityComparator implements Comparator<Task> {
         @Override
         public int compare(Task t1, Task t2) {
-            return Integer.compare(t1.getPriorityX(), t2.getPriorityX());
+            return Integer.compare(t2.getPriorityX(),t1.getPriorityX());
         }
     }
 
@@ -51,7 +51,7 @@ public class NewTaskPool implements DroneInterface {
 
     ConcurrentHashMap<Integer, Task> droneAllocations = new ConcurrentHashMap<>();
     final List<DroneConnectionHandler> registeredDrones = new ArrayList<>();
-    final PriorityQueue<Task> unallocatedTasks = new PriorityQueue<>(new TaskIDComparator());
+    final PriorityQueue<Task> unallocatedTasks = new PriorityQueue<>(new TaskPriorityComparator());
 
 
 
@@ -170,6 +170,9 @@ public class NewTaskPool implements DroneInterface {
                 } else if (rd instanceof ManDownResponse) {
                     log.info("Response message is MANDOWN type");
 
+                    if(rd.getTaskIdX()==null) {
+                        rd.setTaskId(droneAllocations.get(id).getIdX());
+                    }
                     c2.sendPOI(rd);
 
                 } else if (rd instanceof BuildingOccupancyResponse) {
@@ -345,9 +348,11 @@ public class NewTaskPool implements DroneInterface {
     }
 
     private boolean taskRegistered(Task t) {
-        return  TaskWithIDExistsInList(t.getIdX(),allocatedTasks) ||
-                TaskWithIDExistsInList(t.getIdX(),unallocatedTasks) ||
-                TaskWithIDExistsInList(t.getIdX(),completedTasks);
+        synchronized (unallocatedTasks) {
+            return TaskWithIDExistsInList(t.getIdX(), allocatedTasks) ||
+                    TaskWithIDExistsInList(t.getIdX(), unallocatedTasks) ||
+                    TaskWithIDExistsInList(t.getIdX(), completedTasks);
+        }
     }
 
 

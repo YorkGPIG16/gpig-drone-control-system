@@ -51,21 +51,15 @@ public class DumbC2Integration implements C2Integration {
 
         rm.setTasks(new ArrayList<>());
 
-        AerialSurveyTask ast = new AerialSurveyTask();
-        ast.setLocation(new BoundingBox(new Point(53.9556075,-1.072157), new Point(53.9538716,-1.0677649)));
-        ast.setTimestamp(new Date());
-        ast.setPriority(50);
-        ast.setId(1);
+        for(int i = 1; i<1000; i++) {
+            AerialSurveyTask ast = new AerialSurveyTask();
+            ast.setLocation(new BoundingBox(new Point(53.9556075,-1.072157), new Point(53.9538716,-1.0677649)));
+            ast.setTimestamp(new Date());
+            ast.setPriority(50);
+            ast.setId(i);
 
-        AerialSurveyTask ast2 = new AerialSurveyTask();
-        ast2.setLocation(new BoundingBox(new Point(53.9556075,-1.072157), new Point(53.9538716,-1.0677649)));
-        ast2.setTimestamp(new Date());
-        ast2.setPriority(50);
-        ast2.setId(2);
-
-
-        rm.getTasksX().add(ast);
-        rm.getTasksX().add(ast2);
+            rm.getTasksX().add(ast);
+        }
 
         return rm;
 
