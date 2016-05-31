@@ -7,6 +7,7 @@ import gpig.group2.models.alerts.Alert;
 import gpig.group2.models.alerts.Priority;
 import gpig.group2.models.drone.request.RequestMessage;
 import gpig.group2.models.drone.request.Task;
+import gpig.group2.models.drone.request.task.GoToLocationTask;
 import gpig.group2.models.drone.response.ResponseData;
 import gpig.group2.models.drone.response.ResponseMessage;
 import gpig.group2.models.drone.response.responsedatatype.Aborted;
@@ -240,6 +241,8 @@ public class NewTaskPool implements DroneInterface {
                                 if (!taskRegistered(t)) {
                                     addTask(t);
                                 }
+
+
                             }
                         }
 
@@ -319,13 +322,25 @@ public class NewTaskPool implements DroneInterface {
 
                                     Task toAllocate = null;
                                     synchronized (unallocatedTasks) {
-                                        toAllocate = unallocatedTasks.poll();
+
+                                        if(unallocatedTasks.peek() instanceof GoToLocationTask) {
+                                            toAllocate = unallocatedTasks.peek();
+                                        } else {
+                                            toAllocate = unallocatedTasks.poll();
+                                        }
+
                                     }
 
                                     if (toAllocate != null) {
                                         sendTasksToIdleWorkers(handler, toAllocate);
                                     } else {
                                         log.info("No tasks left to allocate");
+                                    }
+                                } else {
+                                    synchronized (unallocatedTasks) {
+                                        if (unallocatedTasks.peek() instanceof GoToLocationTask) {
+                                            sendTasksToIdleWorkers(handler, unallocatedTasks.peek());
+                                        }
                                     }
                                 }
                             }
