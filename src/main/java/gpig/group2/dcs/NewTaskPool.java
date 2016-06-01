@@ -181,6 +181,11 @@ public class NewTaskPool implements DroneInterface {
                 } else if (rd instanceof BuildingOccupancyResponse) {
                     log.info("Response message is BUILDING type");
 
+                    Alert a = new Alert();
+                    a.message = ("Occupied building at (lat: "+rd.getOriginX().getLatitudeX() + ", long: "+rd.getOriginX().getLongitudeX()+").");
+                    a.priority = Priority.PRIORITY_LOW;
+
+                    c2.sendAlert(a);
                     c2.sendBuildingOccupancy(rd);
 
                 }
