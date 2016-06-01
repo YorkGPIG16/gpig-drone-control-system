@@ -172,7 +172,9 @@ public class NewTaskPool implements DroneInterface {
                     log.info("Response message is MANDOWN type");
 
                     if(rd.getTaskIdX()==null) {
-                        rd.setTaskId(droneAllocations.get(id).getIdX());
+                        if(droneAllocations.get(id) != null) {
+                            rd.setTaskId(droneAllocations.get(id).getIdX());
+                        }
                     }
                     c2.sendPOI(rd);
 
