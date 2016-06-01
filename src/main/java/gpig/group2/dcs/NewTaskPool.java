@@ -213,7 +213,9 @@ public class NewTaskPool implements DroneInterface {
             alerts.put(h.getDroneNumber(), new HashSet<>());
         }
 
-        registeredDrones.add(h);
+        synchronized (registeredDrones) {
+            registeredDrones.add(h);
+        }
     }
 
     public NewTaskPool(C2Integration c2) {
