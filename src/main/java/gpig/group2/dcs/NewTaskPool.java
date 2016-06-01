@@ -288,6 +288,10 @@ public class NewTaskPool implements DroneInterface {
 
                         for (DroneConnectionHandler dch : deadHandlers) {
 
+                            Alert a = new Alert();
+                            a.message = ("Drone COMMS Fail. Releasing tasks.");
+                            a.priority = Priority.PRIORITY_LOW;
+
                             synchronized (registeredDrones) {
                                 registeredDrones.remove(dch);
                             }
